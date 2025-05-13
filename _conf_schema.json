@@ -1,0 +1,8 @@
+{
+    "message_count": {
+        "description": "用于分析的消息数量",
+        "type": "int",
+        "hint": "用于分析群友的消息数量，越多越准确，但需要消耗更多时间和Token",
+        "default": 200
+    }
+}
