@@ -44,7 +44,10 @@ git clone https://github.com/Zhalslar/astrbot_plugin_portrayal
 |:-------------:|:-----------------------------------------------:|
 | /画像@群友       | 分析这位群友的性格画像，如果不指定，则分析消息发送者 |
 
-## 示例图
+## 效果图
+
+![download](https://github.com/user-attachments/assets/b080351a-4ee4-4db7-9fd1-c7ba3260263f)
+
 
 ## 🤝 TODO
 
