@@ -46,8 +46,7 @@ git clone https://github.com/Zhalslar/astrbot_plugin_portrayal
 
 ## 效果图
 
-![download](https://github.com/user-attachments/assets/b080351a-4ee4-4db7-9fd1-c7ba3260263f)
-
+![download](https://github.com/user-attachments/assets/988e7cc1-92d1-48c9-8d95-cf83e802bfc9)
 
 ## 🤝 TODO
 
