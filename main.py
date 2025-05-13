@@ -7,7 +7,6 @@ from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
     AiocqhttpMessageEvent,
 )
 
-
 @register(
     "astrbot_plugin_portrayal",
     "Zhalslar",
@@ -21,6 +20,12 @@ class Relationship(Star):
         self.config = config
         # 用于分析的消息数量
         self.message_count = config.get("message_count", 200)
+        # 系统提示词模板
+        self.system_prompt_template = config.get(
+            "system_prompt_template", "请根据聊天记录分析群友的性格"
+        )
+        # 最大允许的查询轮数
+        self.max_query_rounds = config.get("max_query_rounds", 10)
 
     @filter.command("画像")
     async def get_portrayal(self, event: AiocqhttpMessageEvent):
@@ -38,10 +43,12 @@ class Relationship(Star):
             ),
             event.get_sender_id(),
         )
-        if not target_id:
-            yield event.plain_result("请@指定群友")
-            return
+
+        nickname, gender = await self.get_nickname(event, target_id)
+        yield event.plain_result(f"稍等，我看看{nickname}的聊天记录...")
+
         group_id = event.get_group_id()
+        query_rounds = 0
         message_seq = 0
         contexts: list[dict] = []
         # 持续获取群聊历史消息直到达到要求
@@ -71,7 +78,9 @@ class Relationship(Star):
                     )
                 ]
             )
-        nickname, gender = await self.get_nickname(event, target_id)
+            query_rounds += 1
+            if query_rounds >= self.max_query_rounds:
+                break
         llm_respond = await self.get_llm_respond(nickname, gender, contexts)
         if llm_respond:
             url = await self.text_to_image(llm_respond)
@@ -84,12 +93,12 @@ class Relationship(Star):
     ) -> str | None:
         """调用llm回复"""
         try:
-            gender_text = "他" if gender == "male" else "她"
-            system_prompt = f"请根据 {nickname} 的聊天记录，分析{gender_text}的性格特点, 并给出性格标签, 注意要用可爱、调侃的语气，尽量夸奖这位群友，注意给出你的分析过程"
-            prompt = f"这是 {nickname} 的聊天记录"
+            system_prompt = self.system_prompt_template.format(
+                nickname=nickname, gender=("他" if gender == "male" else "她")
+            )
             llm_response = await self.context.get_using_provider().text_chat(
                 system_prompt=system_prompt,
-                prompt=prompt,
+                prompt=f"这是 {nickname} 的聊天记录",
                 contexts=contexts,
             )
             return llm_response.completion_text
