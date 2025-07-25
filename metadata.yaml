@@ -1,5 +1,5 @@
 name: astrbot_plugin_portrayal
 description: "爬取群友的聊天记录，进而用llm分析群友画像"
-version: v1.0.0
+version: v2.0.0
 author: Zhalslar/DITF16(改)
 repo: https://github.com/DITF16/astrbot_plugin_portrayal
